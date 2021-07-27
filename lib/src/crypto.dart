@@ -61,15 +61,23 @@ class Crypto {
     return base58checkCodec.encode(base58PCheckPayload);
   }
 
-  static String hmac(String message, String secret) {
+  static Uint8List hmacBytes(String message, String secret, Digest digest, int blockLength) {
     var messageBytes = utf8.encode(message);
     var secretBytes = utf8.encode(secret);
 
-    var hmacSha256 = HMac(SHA256Digest(), 64);
-    hmacSha256.init(KeyParameter(Uint8List.fromList(secretBytes)));
+    var hmac = HMac(digest, blockLength);
+    hmac.init(KeyParameter(Uint8List.fromList(secretBytes)));
 
-    var bytesHmac = hmacSha256.process(Uint8List.fromList(messageBytes));
+    return hmac.process(Uint8List.fromList(messageBytes));
+  }
 
+  static String hmacSha256(String message, String secret) {
+    var bytesHmac = hmacBytes(message, secret, SHA256Digest(), 64);
+    return hex.encode(bytesHmac);
+  }
+
+  static String hmacSha512(String message, String secret) {
+    var bytesHmac = hmacBytes(message, secret, SHA512Digest(), 128);
     return hex.encode(bytesHmac);
   }
 
