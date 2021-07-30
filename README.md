@@ -14,7 +14,7 @@ Included cryptos:
 
 Included wallets:
 
-* hd wallets based on bip32, bip 39 & bip44
+* hd wallets based on bip32 & bip44
 
 
 ## Usage
