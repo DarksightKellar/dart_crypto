@@ -14,6 +14,7 @@ Included cryptos:
 
 Included wallets:
 
+* papper wallets
 * hd wallets based on bip32, bip 39 & bip44
 
 
