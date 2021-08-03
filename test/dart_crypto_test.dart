@@ -81,7 +81,15 @@ void main() {
       expect(bip39.validateMnemonic(seed.mnemonic), true);
     });
 
-    test('Wallet', () {
+    test('HD Wallet', () {
+
+      var seed = Seed();
+      var wallet = HDWallet.fromSeed(seed);
+      
+      var path = "m/44'/2'/0'/0/1";
+      
+      wallet.generate(path);
+
       expect(true, true);
     });
   });
