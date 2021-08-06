@@ -11,7 +11,7 @@ class HDWallet extends Wallet {
 
   late final String _path = 'm';
 
-  List<HdCkdItem> ckdChilds = [];
+  late Map<String, HdCkdItem> ckdChilds;
 
   HDWallet.fromSeed(Seed seed) {
 
@@ -33,8 +33,30 @@ class HDWallet extends Wallet {
   }
 
   void generate(String path) {
+
+    var childs = path.split('/');
+
+    for (var child in childs) {
+
+      print(child);
+    }
+
     print(path.split('/'));
 
+
+  }
+
+  generateCkdChilds(String currentPath, String finalPath)
+  {
+    if (currentPath == finalPath && ckdChilds.containsKey(currentPath)) {
+      return ckdChilds[currentPath];
+    }
+
+    var currentPathElements = currentPath.split('/');
+    var finalPathElements = finalPath.split('/');
+    for(var i = 0; i <= finalPathElements.length; i++) {
+
+    }
 
   }
 
