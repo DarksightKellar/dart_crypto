@@ -20,18 +20,18 @@ abstract class Wallet {
   // Advanced address type for eth
   static const ADDRESS_TYPE_KECCAK256 = 'keccak256';
 
-  late final String masterPrivateKey;
-  late final String masterPublicKey;
-  late final String masterChainCode;
-  late final String masterAddress;
+  late final String privateKey;
+  late final String publicKey;
+  late final String chainCode;
+  late final String address;
 
   var adapterMap;
 
-  List<int> left256Bits(Uint8List hmacSha512Bits) {
+  static List<int> left256Bits(Uint8List hmacSha512Bits) {
     return hmacSha512Bits.getRange(0, 32).toList();
   }
 
-  List<int> right256Bits(Uint8List hmacSha512Bits) {
+  static List<int> right256Bits(Uint8List hmacSha512Bits) {
     return hmacSha512Bits.getRange(32, hmacSha512Bits.length).toList();
   }
 

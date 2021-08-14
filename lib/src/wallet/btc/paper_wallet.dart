@@ -7,9 +7,9 @@ class PaperWallet extends Wallet {
 
   PaperWallet.fromSeed(Seed seed) {
 
-    masterPrivateKey = Crypto.sha256(seed.mnemonic);
-    masterPublicKey = Crypto.secp256k1Compressed(masterPrivateKey);
-    masterAddress = readAdapter(Wallet.ADAPTER_TYPE_BTC).createAddress(masterPublicKey);
+    privateKey = Crypto.sha256(seed.mnemonic);
+    publicKey = Crypto.secp256k1Compressed(privateKey);
+    address = readAdapter(Wallet.ADAPTER_TYPE_BTC).createAddress(publicKey);
 
   }
 

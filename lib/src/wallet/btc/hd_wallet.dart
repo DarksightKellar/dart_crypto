@@ -22,23 +22,36 @@ class HDWallet extends Wallet {
     var hmac = HMac(SHA512Digest(), 128);
     var hmacBits = hmac.process(seed.seed);
 
-    var leftBits = left256Bits(hmacBits);
-    var rightBits = right256Bits(hmacBits);
+    var leftBits = Wallet.left256Bits(hmacBits);
+    var rightBits = Wallet.right256Bits(hmacBits);
 
-    masterPrivateKey = hex.encode(leftBits);
-    masterChainCode = hex.encode(rightBits);
-    masterPublicKey = Crypto.secp256k1Compressed(masterPrivateKey);
-    masterAddress = readAdapter(Wallet.ADAPTER_TYPE_BTC).createAddress(masterPublicKey);
+    privateKey = hex.encode(leftBits);
+    chainCode = hex.encode(rightBits);
+    publicKey = Crypto.secp256k1Compressed(privateKey);
+    address = readAdapter(Wallet.ADAPTER_TYPE_BTC).createAddress(publicKey);
 
   }
 
   void generate(String path) {
 
     var childs = path.split('/');
+    var currentPath = '';
 
     for (var child in childs) {
 
+      var oldPath = currentPath;
+
+      if (currentPath == '') {
+        currentPath = child;
+      } else {
+        currentPath = currentPath + '/' + child;
+      }
+
+
       print(child);
+      print(isHardenedChild(child));
+      print(oldPath);
+      print(currentPath);
     }
 
     print(path.split('/'));
@@ -46,8 +59,11 @@ class HDWallet extends Wallet {
 
   }
 
-  generateCkdChilds(String currentPath, String finalPath)
-  {
+  bool isHardenedChild(String path) {
+    return path.contains("'");
+  }
+
+  generateCkdChilds(String currentPath, String finalPath) {
     if (currentPath == finalPath && ckdChilds.containsKey(currentPath)) {
       return ckdChilds[currentPath];
     }
