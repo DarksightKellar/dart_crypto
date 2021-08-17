@@ -1,79 +1,98 @@
 
 import 'package:dart_crypto/dart_crypto.dart';
 import 'package:dart_crypto/src/crypto.dart';
-import 'package:dart_crypto/src/wallet/adapter/btc_adapter.dart';
+import 'package:dart_crypto/src/wallet/adapter/coin_adapter.dart';
+import 'package:dart_crypto/src/wallet/adapter/null_adapter.dart';
 import 'package:dart_crypto/src/wallet/btc/hd_ckd_item.dart';
+import 'package:dart_crypto/src/wallet/wallet.dart';
 import 'package:pointycastle/export.dart';
 import 'package:pointycastle/macs/hmac.dart';
 import 'package:convert/convert.dart';
+import 'dart:convert';
 
 class HDWallet extends Wallet {
 
-  late final String _path = 'm';
-
-  late Map<String, HdCkdItem> ckdChilds;
+  Map<String, HdCkdItem> ckdChilds = {};
 
   HDWallet.fromSeed(Seed seed) {
 
-    adapterMap = {
-      Wallet.ADAPTER_TYPE_BTC : BtcAdapter()
-    };
+    index = 0;
+    path = Wallet.BIP0044_STANDARD_MASTER;
 
     var hmac = HMac(SHA512Digest(), 128);
     var hmacBits = hmac.process(seed.seed);
 
-    var leftBits = Wallet.left256Bits(hmacBits);
-    var rightBits = Wallet.right256Bits(hmacBits);
+    var leftBits = left256Bits(hmacBits);
+    var rightBits = right256Bits(hmacBits);
 
     privateKey = hex.encode(leftBits);
     chainCode = hex.encode(rightBits);
     publicKey = Crypto.secp256k1Compressed(privateKey);
-    address = readAdapter(Wallet.ADAPTER_TYPE_BTC).createAddress(publicKey);
+    address = 'NULL';
 
   }
 
   void generate(String path) {
 
-    var childs = path.split('/');
     var currentPath = '';
 
-    for (var child in childs) {
+    for (var pathFragment in path.split('/')) {
 
-      var oldPath = currentPath;
+      var parentPath = currentPath;
+      var currentIndex = pathFragment.replaceAll("'", '');
 
-      if (currentPath == '') {
-        currentPath = child;
-      } else {
-        currentPath = currentPath + '/' + child;
+      currentPath = updateCurrentPath(currentPath, pathFragment);
+
+      if (currentPath.toLowerCase() == Wallet.BIP0044_STANDARD_MASTER || ckdChilds.containsKey(currentPath)) {
+        continue;
       }
 
+      var ckdChild = createCkdChild(currentIndex, currentPath, parentPath, pathFragment);
+      ckdChilds[currentPath] = ckdChild;
 
-      print(child);
-      print(isHardenedChild(child));
-      print(oldPath);
-      print(currentPath);
+      print(json.encode(ckdChilds));
     }
 
-    print(path.split('/'));
+  }
 
+  HdCkdItem createCkdChild(String currentIndex, String currentPath, String parentPath, String pathFragment) {
+    if (parentPath.toLowerCase() == Wallet.BIP0044_STANDARD_MASTER) {
+      if (isHardenedChild(pathFragment)) {
+        return HdCkdItem.hardenedDerivation(privateKey, chainCode, int.parse(currentIndex), currentPath, NullAdapter());
+      }
 
+      return HdCkdItem.derivation(publicKey, chainCode, int.parse(currentIndex), currentPath, NullAdapter());
+    }
+
+    var parentCkd = ckdChilds[parentPath];
+    var adapter = getAdapter(currentIndex, parentPath, parentCkd!);
+
+    if (isHardenedChild(pathFragment)) {
+      return HdCkdItem.hardenedDerivation(parentCkd.privateKey, parentCkd.chainCode, int.parse(currentIndex), currentPath, adapter);
+    }
+
+    return HdCkdItem.derivation(parentCkd.publicKey, parentCkd.chainCode, int.parse(currentIndex), currentPath, adapter);
+
+  }
+
+  CoinAdapter getAdapter(String currentIndex, String parentPath, HdCkdItem parentCkd) {
+    if (parentPath == Wallet.BIP0044_STANDARD_PREFIX) {
+      return readAdapter(currentIndex);
+    }
+
+    return parentCkd.adapter;
+  }
+
+  String updateCurrentPath(String currentPath, String pathFragment) {
+    if (currentPath == '') {
+      return pathFragment;
+    }
+
+    return currentPath + '/' + pathFragment;
   }
 
   bool isHardenedChild(String path) {
     return path.contains("'");
-  }
-
-  generateCkdChilds(String currentPath, String finalPath) {
-    if (currentPath == finalPath && ckdChilds.containsKey(currentPath)) {
-      return ckdChilds[currentPath];
-    }
-
-    var currentPathElements = currentPath.split('/');
-    var finalPathElements = finalPath.split('/');
-    for(var i = 0; i <= finalPathElements.length; i++) {
-
-    }
-
   }
 
 }

@@ -86,7 +86,7 @@ void main() {
       var seed = Seed();
       var wallet = HDWallet.fromSeed(seed);
       
-      var path = "m/44'/2'/0'/0/1";
+      var path = "m/44'/0'/0'/0/1";
       
       wallet.generate(path);
 

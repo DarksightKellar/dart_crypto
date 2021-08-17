@@ -1,13 +1,13 @@
 import 'package:dart_crypto/src/crypto.dart';
-import 'package:dart_crypto/src/wallet/adapter/adapter.dart';
-import 'package:dart_crypto/src/wallet/wallet.dart';
 
-class BtcAdapter extends Adapter {
+import 'coin_adapter.dart';
+
+class BtcAdapter extends CoinAdapter {
 
   late String _addressType;
 
   BtcAdapter() {
-    _addressType = Wallet.ADDRESS_TYPE_P2PKH;
+    _addressType = CoinAdapter.ADDRESS_TYPE_P2PKH;
   }
 
   @override
