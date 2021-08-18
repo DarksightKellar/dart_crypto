@@ -1,21 +1,41 @@
-# Cryptographic library for basic blockchain encryptions & wallets.
+# Cryptographic for blockchain encryptions & wallets.
+
+---
+**NOTE**
 
 A library for Dart developers.
 
+---
+
+## Description
+
 Set of basic encryptions to use in context of blockchain wallets, such as bitcon or ethereum.
 
-Included cryptos:
-
+**Included features:**
 * seed generation
 * mnemonic
 * different types of private key generation
 * public key generation
 * common bitcoin address formats such es p2pkh & p2sh
-
-Included wallets:
-
-* hd wallets based on bip32 & bip44
+* determenistic key generation and wallets
 * papper wallets
+
+## Cryptos
+
+**Supported crypto standards:**
+[BIP0033](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki),
+[BIP0039](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki),
+[BIP0044](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki),
+sha256,
+sha512,
+secp256k1,
+RIPEMD160,
+p2pkh,
+p2sh,
+hmac
+
+**Coin types supported, referred to [SLIP0044](https://github.com/satoshilabs/slips/blob/master/slip-0044.md):** Bitcoin, Bitcoin Cash
+
 
 
 ## Usage
