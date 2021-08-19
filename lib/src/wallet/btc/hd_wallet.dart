@@ -49,8 +49,6 @@ class HDWallet extends Wallet {
 
       var ckdChild = createCkdChild(currentIndex, currentPath, parentPath, pathFragment);
       ckdChilds[currentPath] = ckdChild;
-
-      print(json.encode(ckdChilds));
     }
 
   }
