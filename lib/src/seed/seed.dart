@@ -10,7 +10,7 @@ class Seed {
      _mnemonic = bip39.generateMnemonic();
   }
 
-  Seed.fromMnemonic(Strin mnemonic) {
+  Seed.fromMnemonic(String mnemonic) {
      _mnemonic = mnemonic;
   }
 
